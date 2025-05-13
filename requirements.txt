@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+spacy
+scikit-learn
+transformers
+pytesseract
+pdfplumber
+python-docx
+pillow
+pyMupdf
