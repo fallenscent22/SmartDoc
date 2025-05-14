@@ -9,3 +9,9 @@ pdfplumber
 python-docx
 pillow
 pyMupdf
+python-multipart
+python-magic
+torch
+psycopg2-binary
+boto3
+python-dotenv

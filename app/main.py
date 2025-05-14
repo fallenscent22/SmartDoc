@@ -3,13 +3,13 @@ from typing import List
 from transformers import pipeline
 import os
 import uuid
-from docx import Document
+from docx import Document as DocxDocument  # Renaming the docx import to avoid conflicts
 import fitz  # PyMuPDF for PDFs
 import pytesseract
 from PIL import Image
 import io
 from sqlalchemy.orm import Session
-from database import Session, Document
+from app.database import Session,  DBDocument  # Renaming the SQLAlchemy model
 
 app = FastAPI()
 UPLOAD_DIR = "uploads"
@@ -20,7 +20,6 @@ summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
 print("Model downloaded successfully!")
 
 # --- Text Extraction Functions ---
-
 def extract_text_from_pdf(file_bytes):
     text = ""
     with fitz.open(stream=file_bytes, filetype="pdf") as doc:
@@ -29,7 +28,7 @@ def extract_text_from_pdf(file_bytes):
     return text
 
 def extract_text_from_docx(file_bytes):
-    document = Document(io.BytesIO(file_bytes))
+    document = DocxDocument(io.BytesIO(file_bytes))  # Using renamed DocxDocument
     return "\n".join([para.text for para in document.paragraphs])
 
 def extract_text_from_image(file_bytes):
@@ -40,11 +39,11 @@ def extract_text_from_image(file_bytes):
 @app.get("/")
 def read_root():
     return {"message": "SmartDoc AI is running"}
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     file_id = str(uuid.uuid4())
     file_path = os.path.join(UPLOAD_DIR, f"{file_id}_{file.filename}")
-    
     
     with open(file_path, "wb") as buffer:
         buffer.write(await file.read())
@@ -52,11 +51,11 @@ async def upload_file(file: UploadFile = File(...)):
     # Save file metadata to the database
     session = Session()
     try:
-        new_document = Document(
+        new_document = DBDocument(  # Using renamed DBDocument
             id=file_id,
             filename=file.filename,
             file_path=file_path,
-            file_type=file.content_type
+            doc_type=file.content_type
         )
         session.add(new_document)
         session.commit()
@@ -64,11 +63,12 @@ async def upload_file(file: UploadFile = File(...)):
         session.close()
     
     return {"file_id": file_id, "filename": file.filename, "summary": "File uploaded successfully"}
+
 @app.get("/files")
 def get_files():
     session = Session()
     try:
-        documents = session.query(Document).all()
+        documents = session.query(DBDocument).all()  # Using renamed DBDocument
         files = [{"id": doc.id, "filename": doc.filename} for doc in documents]
     finally:
         session.close()

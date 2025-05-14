@@ -1,4 +1,4 @@
-from database import Session
+from app.database import Session
 from models import Document
 
 session = Session()
