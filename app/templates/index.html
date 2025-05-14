@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartDoc - Document Processing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>SmartDoc</h1>
+            <p>Intelligent Document Processing</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="upload-section">
+            <h2>Upload Document</h2>
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" id="document-input" name="document" accept=".pdf,.docx,.txt">
+                <button type="submit" class="button">Process Document</button>
+            </form>
+            <div id="loading" style="display: none;">
+            <p>Processing document... Please wait.</p>
+            </div>
+            <div id="error-message" class="error" style="display: none;"></div>
+        </section>
+
+        <section id="results-section" class="results-section">
+            <!-- Results will be dynamically inserted here -->
+            <div id="entities"></div>
+            <div id="summary"></div>
+            <div id="doc_type"></div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
